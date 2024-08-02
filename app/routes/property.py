@@ -12,7 +12,7 @@ property_bp = Blueprint('property', __name__)
 propertiesCollection = current_app.propertiesCollection
 
 # Create Property
-@property_bp.route('/api/admin/properties', methods=['POST'])
+@property_bp.route('/api/admin/properties', methods=['POST', 'OPTIONS'])
 def create_property():
     """Create a new property instance and store it in the database.
        Return: "msg": "Property created successfully"
@@ -43,7 +43,7 @@ def create_property():
 
 
 # Get All Properties
-@property_bp.route('/api/admin/properties', methods=['GET'])
+@property_bp.route('/api/admin/properties', methods=['GET', 'OPTIONS'])
 def get_all_properties():
     """Retrieve all properties from the database.
     Return: List of properties
@@ -65,7 +65,7 @@ def get_all_properties():
 
 
 # Get Specific Property Details
-@property_bp.route('/api/admin/properties/<property_id>', methods=['GET'])
+@property_bp.route('/api/admin/properties/<property_id>', methods=['GET', 'OPTIONS'])
 def get_specific_property(property_id):
     """Retrieve details of a specific property by ID.
     """
@@ -93,7 +93,7 @@ def get_specific_property(property_id):
 
 
 # Update Property Details
-@property_bp.route('/api/admin/properties/<property_id>', methods=['PUT'])
+@property_bp.route('/api/admin/properties/<property_id>', methods=['PUT', 'OPTIONS'])
 def update_property(property_id):
     """Update a specific property by ID."""
     data = request.json
@@ -123,7 +123,7 @@ def update_property(property_id):
 
 
 # Delete Property
-@property_bp.route('/api/admin/properties/<property_id>', methods=['DELETE'])
+@property_bp.route('/api/admin/properties/<property_id>', methods=['DELETE', 'OPTIONS'])
 def delete_property(property_id):
     """Dlete a specific property by ID."""
     try:

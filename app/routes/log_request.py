@@ -11,7 +11,7 @@ log_request_bp = Blueprint('log_request', __name__)
 logRequestsCollection = current_app.logRequestsCollection
 
 # Create Log Request
-@log_request_bp.route('/api/admin/log-requests', methods=['POST'])
+@log_request_bp.route('/api/admin/log-requests', methods=['POST', 'OPTIONS'])
 def create_log_request():
     """Create log request as instance of LogRequest.
        Post log request to MongoDB database.
@@ -47,7 +47,7 @@ def create_log_request():
 
 
 # Get All Open Log Requests
-@log_request_bp.route('/api/admin/log-requests', methods=['GET'])
+@log_request_bp.route('/api/admin/log-requests', methods=['GET', 'OPTIONS'])
 def get_all_log_requests():
     """Find all open log requests from MongoDB and
     return list of all the open log requests
@@ -73,7 +73,7 @@ def get_all_log_requests():
 
 
 # Get Specific Log Request Details
-@log_request_bp.route('/api/admin/log-requests/<request_id>', methods=['GET'])
+@log_request_bp.route('/api/admin/log-requests/<request_id>', methods=['GET', 'OPTIONS'])
 def get_log_request(request_id):
     try:
         log_request = logRequestsCollection.find_one(
@@ -101,7 +101,7 @@ def get_log_request(request_id):
 
 
 # Update Log Request
-@log_request_bp.route('/api/admin/log-requests/<request_id>', methods=['PUT'])
+@log_request_bp.route('/api/admin/log-requests/<request_id>', methods=['PUT', 'OPTIONS'])
 def update_log_request(request_id):
     """Update a specific log request with a request_id.
     Args:
@@ -135,7 +135,7 @@ def update_log_request(request_id):
 
 # Update Log Request Status
 @log_request_bp.route(
-    '/api/admin/log-requests/<request_id>/status', methods=['PUT']
+    '/api/admin/log-requests/<request_id>/status', methods=['PUT', 'OPTIONS']
 )
 def update_log_request_status(request_id):
     """Update the status of a specific log request with a request_id.
@@ -165,7 +165,7 @@ def update_log_request_status(request_id):
 
 # Archive Log Request
 @log_request_bp.route(
-    '/api/admin/log-requests/<request_id>/archive', methods=['PUT']
+    '/api/admin/log-requests/<request_id>/archive', methods=['PUT', 'OPTIONS']
 )
 def archive_log_request(request_id):
     """Archive a specific log request with a request_id.
@@ -195,7 +195,7 @@ def archive_log_request(request_id):
 
 # close Log Request
 @log_request_bp.route(
-    '/api/admin/log-requests/<request_id>/close', methods=['PUT']
+    '/api/admin/log-requests/<request_id>/close', methods=['PUT', 'OPTIONS']
 )
 def close_log_request(request_id):
     """Close a specific log request with a request_id.

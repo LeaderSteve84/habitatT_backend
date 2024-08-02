@@ -13,7 +13,7 @@ profile_bp = Blueprint('profile_bp', __name__)
 adminsCollection = current_app.adminsCollection
 tenantsCollection = current_app.tenantsCollection
 
-@profile_bp.route('/api/profile', methods=['GET'])
+@profile_bp.route('/api/profile', methods=['GET', 'OPTIONS'])
 @jwt_required()
 def get_profile():
     identity = get_jwt_identity()

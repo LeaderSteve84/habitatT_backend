@@ -27,7 +27,7 @@ def convert_objectid(obj):
     else:
         return obj
 
-@communication_bp.route('/api/messages', methods=['GET'])
+@communication_bp.route('/api/messages', methods=['GET', 'OPTIONS'])
 @jwt_required()
 def get_messages():
     messages = list(messagesCollection.find())
@@ -36,7 +36,7 @@ def get_messages():
 
 from datetime import datetime
 
-@communication_bp.route('/api/send_message', methods=['POST'])
+@communication_bp.route('/api/send_message', methods=['POST', 'OPTIONS'])
 @jwt_required()
 def send_message():
     try:

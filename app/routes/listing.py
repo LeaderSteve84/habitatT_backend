@@ -13,7 +13,7 @@ listingCollection = current_app.listingCollection
 
 
 # Create listing
-@listing_bp.route('/api/admin/properties-listing', methods=['POST'])
+@listing_bp.route('/api/admin/properties-listing', methods=['POST', 'OPTIONS'])
 def create_property_listing():
     """Create a new property listing instance and store it in the database.
        Return: "msg": "listing created successfully"
@@ -48,7 +48,7 @@ def create_property_listing():
 
 
 # Get All Listed Properties
-@listing_bp.route('/api/admin/properties-listing', methods=['GET'])
+@listing_bp.route('/api/admin/properties-listing', methods=['GET', 'OPTIONS'])
 def get_all_listed_properties():
     """Retrieve all properties listed from the database.
     Return: List of listed properties
@@ -71,7 +71,7 @@ def get_all_listed_properties():
 
 # Get Specific listed Property Details
 @listing_bp.route(
-    '/api/admin/properties-listing/<listing_id>', methods=['GET']
+    '/api/admin/properties-listing/<listing_id>', methods=['GET', 'OPTIONS']
 )
 def get_listed_property(listing_id):
     """Retrieve details of a specific listed property by ID.
@@ -101,7 +101,7 @@ def get_listed_property(listing_id):
 
 # Update Property Details
 @listing_bp.route(
-    '/api/admin/properties-listing/<listing_id>', methods=['PUT']
+    '/api/admin/properties-listing/<listing_id>', methods=['PUT', 'OPTIONS']
 )
 def update_property(listing_id):
     """Update a specific listed property by ID."""
@@ -133,7 +133,7 @@ def update_property(listing_id):
 
 # Delete Listed Property
 @listing_bp.route(
-    '/api/admin/properties-listing/<listing_id>', methods=['DELETE']
+    '/api/admin/properties-listing/<listing_id>', methods=['DELETE', 'OPTIONS']
 )
 def delete_listed_property(listing_id):
     """Delete a specific listed property by ID."""

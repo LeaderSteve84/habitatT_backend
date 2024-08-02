@@ -12,7 +12,7 @@ admin_message_bp = Blueprint('admin_message', __name__)
 adminMessagesCollection = current_app.adminMessagesCollection
 
 # Create Admin Message
-@admin_message_bp.route('/api/admin/messages', methods=['POST'])
+@admin_message_bp.route('/api/admin/messages', methods=['POST', 'OPTIONS'])
 def create_message():
     """Create an admin message.
        POST message to MongoDB database.
@@ -40,7 +40,7 @@ def create_message():
 
 
 # Get all Admin Messages
-@admin_message_bp.route('/api/admin/messages', methods=['GET'])
+@admin_message_bp.route('/api/admin/messages', methods=['GET', 'OPTIONS'])
 def get_all_messages():
     """Find all messages from MongoDB and return list of all the messages"""
     try:
@@ -57,7 +57,7 @@ def get_all_messages():
 
 
 # Update Specific Admin Message
-@admin_message_bp.route('/api/admin/messages/<message_id>', methods=['PUT'])
+@admin_message_bp.route('/api/admin/messages/<message_id>', methods=['PUT', 'OPTIONS'])
 def update_message(message_id):
     """Update a specific admin message with a message_id.
     Args:
@@ -88,7 +88,7 @@ def update_message(message_id):
 
 
 # Delete Admin Message
-@admin_message_bp.route('/api/admin/messages/<message_id>', methods=['DELETE'])
+@admin_message_bp.route('/api/admin/messages/<message_id>', methods=['DELETE', 'OPTIONS'])
 def delete_message(message_id):
     """Delete a specific admin message with a message_id
     Args:

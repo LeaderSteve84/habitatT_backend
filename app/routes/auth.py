@@ -36,7 +36,7 @@ def authenticate(email, password, role):
     logging.debug("Authentication failed!")
     return None
 
-@auth_bp.route('/api/login', methods=['POST'])
+@auth_bp.route('/api/login', methods=['POST', 'OPTIONS'])
 def login():
     if not request.is_json:
         logging.debug("Request missing JSON")
@@ -72,7 +72,7 @@ def login():
     return response
 
 
-@auth_bp.route('/api/forgot_password', methods=['POST'])
+@auth_bp.route('/api/forgot_password', methods=['POST', 'OPTIONS'])
 def forgot_password():
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
@@ -103,7 +103,7 @@ def forgot_password():
         current_app.logger.error(f"Failed to send email: {str(e)}")
         return jsonify({"msg": f"Failed to send email: {str(e)}"}), 500
 
-@auth_bp.route('/api/reset_password/<token>', methods=['POST'])
+@auth_bp.route('/api/reset_password/<token>', methods=['POST', 'OPTIONS'])
 def reset_password(token):
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400

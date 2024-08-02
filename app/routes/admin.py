@@ -30,7 +30,7 @@ def send_email(subject, recipients, body):
         logging.error(f"Failed to send email to {recipients}: {e}")
 
 # Create admin Account
-@admin_bp.route('/api/admin/admins', methods=['POST'])
+@admin_bp.route('/api/admin/admins', methods=['POST', 'OPTIONS'])
 def create_admin():
     """create admin as instance of admin.
        post admin to mongodb database.
@@ -70,7 +70,7 @@ def create_admin():
     return jsonify({"msg": "admin created successfully", "adminId": str(admin_id)}), 201
 
 # Get all admins
-@admin_bp.route('/api/admin/admins', methods=['GET'])
+@admin_bp.route('/api/admin/admins', methods=['GET', 'OPTIONS'])
 def get_all_admins():
     """find all admins fron mongodb and
     return list of all the admins
@@ -96,7 +96,7 @@ def get_all_admins():
         return jsonify({"error": str(e)}), 500
 
 # Get a Specific admin Details
-@admin_bp.route('/api/admin/admins/<admin_id>', methods=['GET'])
+@admin_bp.route('/api/admin/admins/<admin_id>', methods=['GET', 'OPTIONS'])
 def get_admin(admin_id):
     try:
         admin = adminsCollection.find_one(
@@ -127,7 +127,7 @@ def get_admin(admin_id):
         return jsonify({"error": str(e)}), 400
 
 # Update Specific admin Details
-@admin_bp.route('/api/admin/admins/<admin_id>', methods=['PUT'])
+@admin_bp.route('/api/admin/admins/<admin_id>', methods=['PUT', 'OPTIONS'])
 def update_admin(admin_id):
     """update a specific admin with a admin_id.
     Args:
@@ -160,7 +160,7 @@ def update_admin(admin_id):
         return jsonify({"error": str(e)}), 500
 
 # Deactivate/Delete admin Account
-@admin_bp.route('/api/admin/admins/<admin_id>', methods=['DELETE'])
+@admin_bp.route('/api/admin/admins/<admin_id>', methods=['DELETE', 'OPTIONS'])
 @jwt_required()
 def delete_admin(admin_id):
     """update a specific admin with a admin_id.
@@ -181,7 +181,7 @@ def delete_admin(admin_id):
         return jsonify({"error": str(e)}), 500
 
 # Forgot Password
-@admin_bp.route('/api/admin/forgot_password', methods=['POST'])
+@admin_bp.route('/api/admin/forgot_password', methods=['POST', 'OPTIONS'])
 def forgot_password():
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
@@ -211,7 +211,7 @@ def forgot_password():
         return jsonify({"msg": f"Failed to send email: {str(e)}"}), 500
 
 # Reset Password
-@admin_bp.route('/api/admin/reset_password/<token>', methods=['POST'])
+@admin_bp.route('/api/admin/reset_password/<token>', methods=['POST', 'OPTIONS'])
 def reset_password(token):
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
