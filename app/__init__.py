@@ -66,7 +66,11 @@ def create_app(config_name='default'):
     socketio.init_app(app)
 
     # Enable CORS for all domains on all routes
-    CORS(app)
+    CORS(
+        app, supports_credentials=True, resources={r"/api/*": {"origins": "*"}},
+        methods=["GET", "POST", "PUT", "DELETE"],
+        allow_headers=["Content-Type", "Authorization"]
+    )
 
     # Configure logging
     if not app.debug:
