@@ -7,7 +7,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import mail
 import datetime
 import uuid
-import logging
+
+logger = current_app.logger
 
 auth_bp = Blueprint('auth_bp', __name__)
 reset_tokens = {}
@@ -19,27 +20,27 @@ adminsCollection = current_app.adminsCollection
 # Utility functions
 def authenticate(email, password, role):
     email = email.strip().lower()
-    logging.debug(f"Authenticating user with email: {email} and role: {role}")
+    logger.debug(f"Authenticating user with email: {email} and role: {role}")
     
     if role == 'admin':
         user = adminsCollection.find_one({"contact_details.email": email})
     elif role == 'tenant':
         user = tenantsCollection.find_one({"contact_details.email": email})
     else:
-        logging.debug("Invalid role provided")
+        logger.debug("Invalid role provided")
         return None
     
     if user and check_password_hash(user["password"], password):
-        logging.debug("Password match!")
+        logger.debug("Password match!")
         return user
     
-    logging.debug("Authentication failed!")
+    logger.debug("Authentication failed!")
     return None
 
 @auth_bp.route('/api/login', methods=['POST', 'OPTIONS'])
 def login():
     if not request.is_json:
-        logging.debug("Request missing JSON")
+        logger.debug("Request missing JSON")
         return jsonify({"msg": "Missing JSON in request"}), 400
 
     data = request.get_json()
@@ -50,17 +51,17 @@ def login():
     remember_me = data.get('remember_me', False)
     
     if not email or not password or not role:
-        logging.debug("Missing email, password, or role")
+        logger.debug("Missing email, password, or role")
         return jsonify({"msg": "Missing email, password, or role"}), 400
     
     user = authenticate(email, password, role)
     
     if not user:
-        logging.debug("Authentication failed")
+        logger.debug("Authentication failed")
         return jsonify({"msg": "Invalid email, password, or role"}), 401
     
     if role == 'tenant' and not user.get('active', False):
-        logging.debug("Tenant account is not active")
+        logger.debug("Tenant account is not active")
         return jsonify({"msg": "Account is not active"}), 403
     
     expires = datetime.timedelta(days=7) if remember_me else datetime.timedelta(hours=1)
@@ -68,7 +69,7 @@ def login():
     response = jsonify(msg="You have successfully logged in", access_token=access_token)
     set_access_cookies(response, access_token)
 
-    logging.debug("User authenticated successfully")
+    logger.debug("User authenticated successfully")
     return response
 
 
@@ -91,7 +92,7 @@ def forgot_password():
     reset_tokens[reset_token] = email
     reset_url = url_for('main.auth_bp.reset_password', token=reset_token, _external=True)
     
-    logging.debug(f"Reset token: {reset_token}")
+    logger.debug(f"Reset token: {reset_token}")
     
     msg = Message(subject="Password Reset Request",
                   recipients=[email],
@@ -100,7 +101,7 @@ def forgot_password():
         mail.send(msg)
         return jsonify({"msg": "Password Reset email sent"}), 200
     except Exception as e:
-        current_app.logger.error(f"Failed to send email: {str(e)}")
+        logger.error(f"Failed to send email: {str(e)}")
         return jsonify({"msg": f"Failed to send email: {str(e)}"}), 500
 
 @auth_bp.route('/api/reset_password/<token>', methods=['POST', 'OPTIONS'])
@@ -138,9 +139,9 @@ def reset_password(token):
     result = collection.update_one({"contact_details.email": email}, {"$set": {"password": new_hashed_password}})
     
     if result.modified_count == 1:
-        logging.debug("Password updated successfully")
+        logger.debug("Password updated successfully")
     else:
-        logging.debug("Password update failed")
+        logger.debug("Password update failed")
 
     del reset_tokens[token]  # Invalidate the token after use
     

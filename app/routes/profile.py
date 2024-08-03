@@ -7,9 +7,9 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Mail, Message
 import uuid
-import logging
 
 profile_bp = Blueprint('profile_bp', __name__)
+# logger = current_app.logger
 adminsCollection = current_app.adminsCollection
 tenantsCollection = current_app.tenantsCollection
 

@@ -9,25 +9,21 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Mail, Message
 import uuid
-import logging
 
 admin_bp = Blueprint('admin', __name__)
-
+logger = current_app.logger
 adminsCollection = current_app.adminsCollection
 
 # In-memory store for reset tokens
 reset_tokens = {}
 
-# Set up basic logging
-logging.basicConfig(level=logging.DEBUG)
-
 def send_email(subject, recipients, body):
     msg = Message(subject=subject, recipients=recipients, body=body)
     try:
         mail.send(msg)
-        logging.debug(f"Email sent to {recipients}")
+        logger.debug(f"Email sent to {recipients}")
     except Exception as e:
-        logging.error(f"Failed to send email to {recipients}: {e}")
+        logger.error(f"Failed to send email to {recipients}: {e}")
 
 # Create admin Account
 @admin_bp.route('/api/admin/admins', methods=['POST', 'OPTIONS'])
@@ -207,7 +203,7 @@ def forgot_password():
         mail.send(msg)
         return jsonify({"msg": "Password Reset email sent"}), 200
     except Exception as e:
-        current_app.logger.error(f"Failed to send email: {str(e)}")
+        logger.error(f"Failed to send email: {str(e)}")
         return jsonify({"msg": f"Failed to send email: {str(e)}"}), 500
 
 # Reset Password
