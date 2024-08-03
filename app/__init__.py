@@ -11,6 +11,7 @@ from flask_mail import Mail, Message
 from flask_jwt_extended import JWTManager
 from flask_socketio import SocketIO
 import logging
+from logging.handlers import RotatingFileHandler
 
 # Initialize mail instance globally
 mail = Mail()
@@ -50,6 +51,25 @@ def initialize_collections(client: MongoClient, db_name: str):
         messagesCollection
     )
 
+# configuration logging before app creation, for stream handler and file handler
+logger = logging.getLogger()
+formatter = logging.Formatter(
+    '[%(asctime)s] - %(levelname)s - %(module)s: %(message)s'
+)
+logger.setLevel(logging.INFO)
+
+# add stream handler to the root logger
+streamHandler = logging.StreamHandler()
+streamHandler.setLevel(logging.INFO)
+streamHandler.setFormatter(formatter)
+logger.addHandler(streamHandler)
+
+# add file handler to the root logger
+fileHandler = RotatingFileHandler('habitatT.log', backupCount=100, maxBytes=1024)
+fileHandler.setLevel(logging.INFO)
+fileHandler.setFormatter(formatter)
+logger.addHandler(fileHandler)
+
 
 def create_app(config_name='default'):
     """return flask application"""
@@ -71,17 +91,6 @@ def create_app(config_name='default'):
         methods=["GET", "POST", "PUT", "DELETE"],
         allow_headers=["Content-Type", "Authorization"]
     )
-
-    # Configure logging
-    if not app.debug:
-        app.logger.setLevel(logging.DEBUG)
-        stream_handler = logging.StreamHandler()
-        stream_handler.setLevel(logging.DEBUG)
-        formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-        )
-        stream_handler.setFormatter(formatter)
-        app.logger.addHandler(stream_handler)
 
     # JWT blocklist loader function
     @jwt.token_in_blocklist_loader
