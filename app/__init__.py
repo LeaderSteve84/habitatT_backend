@@ -56,17 +56,17 @@ logger = logging.getLogger()
 formatter = logging.Formatter(
     '[%(asctime)s] - %(levelname)s - %(module)s: %(message)s'
 )
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 # add stream handler to the root logger
 streamHandler = logging.StreamHandler()
-streamHandler.setLevel(logging.INFO)
+streamHandler.setLevel(logging.DEBUG)
 streamHandler.setFormatter(formatter)
 logger.addHandler(streamHandler)
 
 # add file handler to the root logger
 fileHandler = RotatingFileHandler('habitatT.log', backupCount=100, maxBytes=1024)
-fileHandler.setLevel(logging.INFO)
+fileHandler.setLevel(logging.DEBUG)
 fileHandler.setFormatter(formatter)
 logger.addHandler(fileHandler)
 
@@ -88,7 +88,7 @@ def create_app(config_name='default'):
     # Enable CORS for all domains on all routes
     CORS(
         app, supports_credentials=True, resources={r"/api/*": {"origins": "*"}},
-        methods=["GET", "POST", "PUT", "DELETE"],
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allow_headers=["Content-Type", "Authorization"]
     )
 
