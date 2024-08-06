@@ -2,16 +2,17 @@
 """All routes for admin CRUD operations"""
 from flask import Blueprint, request, jsonify, url_for, current_app
 from bson.objectid import ObjectId
-from app import mail
+# from app import mail - use current_app instead
 from app.models.admin import Admin
 from pymongo.errors import PyMongoError
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_mail import Mail, Message
+from flask_mail import Message  # Mail - no need to import Mail
 import uuid
 
 admin_bp = Blueprint('admin', __name__)
 logger = current_app.logger
+mail = current_app.mail
 adminsCollection = current_app.adminsCollection
 
 # In-memory store for reset tokens
