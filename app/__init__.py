@@ -7,11 +7,13 @@ from pymongo import MongoClient, errors
 from pymongo.collection import Collection
 from pymongo.database import Database
 from app.config import Config
+from app.config import RequestFormatter
 from flask_mail import Mail, Message
 from flask_jwt_extended import JWTManager
 from flask_socketio import SocketIO
 import logging
 from logging.handlers import RotatingFileHandler
+from logging.handlers import SMTPHandler
 
 # Initialize mail instance globally
 mail = Mail()
@@ -51,10 +53,13 @@ def initialize_collections(client: MongoClient, db_name: str):
         messagesCollection
     )
 
-# configuration logging before app creation, for stream handler and file handler
+
+# configuration logging before app creation,
+# for stream, file and mail handlers.
 logger = logging.getLogger()
-formatter = logging.Formatter(
-    '[%(asctime)s] - %(levelname)s - %(module)s: %(message)s'
+formatter = RequestFormatter(
+    '[%(asctime)s] %(remote_addr)s requested %(url)s \
+    %(levelname)s in %(module)s: %(message)s'
 )
 logger.setLevel(logging.DEBUG)
 
@@ -65,7 +70,9 @@ streamHandler.setFormatter(formatter)
 logger.addHandler(streamHandler)
 
 # add file handler to the root logger
-fileHandler = RotatingFileHandler('habitatT.log', backupCount=100, maxBytes=1024)
+fileHandler = RotatingFileHandler(
+    'habitatT.log', backupCount=100, maxBytes=1024
+)
 fileHandler.setLevel(logging.DEBUG)
 fileHandler.setFormatter(formatter)
 logger.addHandler(fileHandler)
@@ -82,12 +89,28 @@ def create_app(config_name='default'):
         app.config.from_object(Config)
 
     mail.init_app(app)
+    app.mail = mail
     jwt = JWTManager(app)
     socketio.init_app(app)
 
+    # create SMTP handler to be added to the root logger
+    mail_handler = SMTPHandler(
+        mailhost=(
+            app.config['MAIL_SERVER'],
+            app.config['MAIL_PORT']
+        ),
+        fromaddr=app.config['MAIL_DEFAULT_SENDER'],
+        toaddrs=['steveadahson@gmail.com', 'hakeemabdullah87@gmail.com'],
+        subject='System error - log'
+    )
+    mail_handler.setLevel(logging.ERROR)
+    mail_handler.setFormatter(formatter)
+    app.logger.addHandler(mail_handler)
+
     # Enable CORS for all domains on all routes
     CORS(
-        app, supports_credentials=True, resources={r"/api/*": {"origins": "*"}},
+        app, supports_credentials=True,
+        resources={r"/api/*": {"origins": "*"}},
         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allow_headers=["Content-Type", "Authorization"]
     )
