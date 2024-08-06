@@ -2,31 +2,29 @@
 """All routes for tenant CRUD operations"""
 from flask import Blueprint, request, jsonify, url_for, current_app
 from bson.objectid import ObjectId
-from app import mail, Message
+from flask_mail import Message
 from app.models.tenant import Tenant
 from pymongo.errors import PyMongoError
 from werkzeug.security import generate_password_hash
 from bson.errors import InvalidId
 import uuid
-import logging
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 tenant_bp = Blueprint('tenant', __name__)
+logger = current_app.logger
+mail = current_app.mail
 reset_tokens = {}
 tenantsCollection = current_app.tenantsCollection
-
-# Set up basic logging
-logging.basicConfig(level=logging.DEBUG)
 
 # Utility function to send emails
 def send_email(subject, recipients, body):
     msg = Message(subject=subject, recipients=recipients, body=body)
     try:
         mail.send(msg)
-        logging.debug(f"Email sent to {recipients}")
+        logger.debug(f"Email sent to {recipients}")
     except Exception as e:
-        logging.error(f"Failed to send email to {recipients}: {e}")
+        logger.error(f"Failed to send email to {recipients}: {e}")
 
 # Create Tenant Account
 @tenant_bp.route('/api/admin/tenants', methods=['POST', 'OPTIONS'])
