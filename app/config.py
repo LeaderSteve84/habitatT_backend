@@ -3,7 +3,8 @@
 import os
 from dotenv import load_dotenv
 import ast
-
+from flask import has_request_context, request
+import logging
 # Load environmental variables from .env file
 load_dotenv()
 
@@ -30,3 +31,15 @@ class TestingConfig(Config):
     TESTING = True
     MONGO_DB_NAME = os.environ.get('TEST_MONGO_DB_NAME')
     JWT_COOKIE_SECURE = False  # insecure for testing purpose
+
+
+class RequestFormatter(logging.Formatter):
+    def format(self, record):
+        if has_request_context():
+            record.url = request.url
+            record.remote_addr = request.remote_addr
+        else:
+            record.url = None
+            record.remote_addr = None
+
+        return super().format(record)
